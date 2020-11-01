@@ -17,7 +17,7 @@ int main() {
 
     switch (action) {
         case 'N' :
-            //newUser
+            // newUser piet;
 
             std::cout << "Thanks for signing up!" << std::endl;
             std::cout << "Do you want to order now? [Y|N] " << std::endl;

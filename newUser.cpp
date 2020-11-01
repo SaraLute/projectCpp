@@ -32,7 +32,17 @@ userType input() {
     std::cout << "\n Address: ";
     std::cin >> newUser.address;
 
+
     // newUser.newOrder = getOrder();
 
     return newUser;
+}
+
+int main() {
+    userType u;
+    u = input();
+    std::cout <<"\n========"<< std::endl << "Collected the details of "
+         << u.name << std::endl;
+
+    return 0;
 }
