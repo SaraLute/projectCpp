@@ -1,14 +1,31 @@
-//
-// Created by Sara Lute on 01/11/2020.
-//
-
 #ifndef PROJECTCPP_NEWORDER_H
 #define PROJECTCPP_NEWORDER_H
 
+#include <iostream>
+#include <fstream>
+#include "userData.h"
+
 
 class newOrder {
+private:
+    std::string restaurant;
+    std::vector<int> items;
+    int tempRes;
+public:
+    newOrder();
+    ~newOrder();
 
+    int restaurantDec();
+    std::vector<int> itemDec(int tempRes);
+
+    std::string setRestaurant(int tempRes);
+
+    std::string getRestaurant(){
+        return restaurant;
+    }
+    std::vector<int> getItems(){
+        return items;
+    }
 };
-
 
 #endif //PROJECTCPP_NEWORDER_H
