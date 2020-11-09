@@ -9,7 +9,7 @@ userData::userData() = default;
 
 userData::~userData() = default;
 
-std::vector<int> userData::setCoordinates(const std::string& addr) {
+std::vector<int> userData::setDesCoordinates(const std::string& address) {
     std::vector<int> x_des = {836, 1040, 1186, 1186, 822, 1186, 1186, 993, 1186, 822, 945, 1186, 1186, 1186, 1122, 822};
     std::vector<int> y_des = {447, 53, 383, 394, 291, 403, 383, 53, 145, 268, 53, 320, 132, 386, 447, 107};
     bool found = false;
@@ -20,7 +20,7 @@ std::vector<int> userData::setCoordinates(const std::string& addr) {
         std::string line;
         while(getline(addressbook, line)) { // I changed this, see below
             curLine++;
-            if (line.find(addr, 0) != string::npos) {
+            if (line.find(address, 0) != string::npos) {
                 // cout << "found: " << addr << " in line: " << curLine << endl;
                 found = true;
                 coordinates = {x_des[curLine-1], y_des[curLine-1]};

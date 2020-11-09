@@ -11,6 +11,7 @@ class newOrder {
 private:
     std::string restaurant;
     std::vector<int> items;
+    std::vector<int> resCoordinates;
     int tempRes{};
 public:
     newOrder();
@@ -19,9 +20,14 @@ public:
     int restaurantDec();
     std::vector<int> itemDec(int tempRes);
     std::string setRestaurant(int tempRes);
+    std::vector<int> setResCoordinates(int tempRes);
+
 
     static void menuCard();
 
+    std::vector<int> getResCoordinates(){
+        return resCoordinates;
+    }
     int getTempRes(){
         return tempRes;
     }

@@ -20,7 +20,7 @@ int main() {
             one.addressBook();
             one.setName();
             one.setAddress();
-            one.setCoordinates(one.getAddress());
+            one.setDesCoordinates(one.getAddress());
 
             std::cout << "Thanks for signing up!" << std::endl;
             std::cout << "Do you want to order now? [Y|N] " << std::endl;
@@ -33,7 +33,7 @@ int main() {
                     two.restaurantDec();
                     two.itemDec(two.getTempRes());
                     two.setRestaurant(two.getTempRes());
-                    //deliveryMan
+                    //deliveryMen
                     //TrackDelivery
                     break;
                 case 'N' :
@@ -49,7 +49,7 @@ int main() {
             two.restaurantDec();
             two.itemDec(two.getTempRes());
             two.setRestaurant(two.getTempRes());
-            //deliveryMan
+            //deliveryMen
             //trackDelivery
             break;
         default:

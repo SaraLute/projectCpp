@@ -17,7 +17,7 @@ public:
 
     std::string setName();
     std::string setAddress();
-    std::vector<int> setCoordinates(const std::string& address);
+    std::vector<int> setDesCoordinates(const std::string& address);
     void addressBook();
 
     std::string getName(){
@@ -26,7 +26,7 @@ public:
     std::string getAddress() {
         return address;
     }
-    std::vector<int> getCoordinates(){
+    std::vector<int> getDesCoordinates(){
         return coordinates;
     }
 };

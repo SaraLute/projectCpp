@@ -94,6 +94,13 @@ std::string newOrder::setRestaurant(int tempRst) {
     return restaurant;
 }
 
+std::vector<int> newOrder::setResCoordinates(int tempRstr) {
+    std::vector<int> x_res = {641, 628, 487, 752, 679};
+    std::vector<int> y_res = {524, 744, 524, 546, 524};
+    resCoordinates = {x_res[tempRes-1], y_res[tempRes-1]};
+    return resCoordinates;
+}
+
 void newOrder::menuCard() {
     std::cout << "\n**********************************************" << std::endl;
     std::cout << "  WELCOME to the menu's that are available" << std::endl;
