@@ -16,6 +16,7 @@ trackDelivery::trackDelivery()
 	/// Tracking process
 	/// 
 	
+	//std::cout << binaryMask << std::endl;
 	deliveryManProgress();
 
 }
@@ -56,8 +57,8 @@ void trackDelivery::deliveryManProgress()
 {
 	// Plotting the coordinates of delivery person, restaurant and customer location
 	//cv::Point DM(42, 53);					//X, Y coordinates of delivery man in terms of cv::Point
-	cv::Point DM = deliveryPerson.at(1);
-	cv::Point res = restaurantLocations.at(3);
+	cv::Point DM = deliveryPerson.at(5);
+	cv::Point res = restaurantLocations.at(2);
 	cv::Scalar colorCircle1(0, 0, 255);		//BGR color
 
 	cv::circle(mapToProcess, DM, 5, cv::Scalar(0, 0, 255), 2);
@@ -75,6 +76,7 @@ void trackDelivery::deliveryManProgress()
 	//Temporary variables
 	int count = 0;
 	cv::Point updatedDM = DM;
+	historyDM.push_back(DM);
 
 	// Inside a while loop
 	while ( (DM.x!= res.x || DM.y != res.y) && count < 1500)
@@ -83,18 +85,27 @@ void trackDelivery::deliveryManProgress()
 		searchNeighbourhood(updatedDM);
 		updatedDM = computeDirection(updatedDM, updatedDM);
 
+		if (count==0)
+			updatedDM = computeDirection(updatedDM, historyDM[0]);
+		else
+			updatedDM = computeDirection(updatedDM, historyDM[count]);
+
 		if (count % 20 == 0)
 		{
 			cv::circle(mapToProcess, updatedDM, 3, cv::Scalar(0, 0, 255), 1);
 			cv::imshow("Map of City", mapToProcess);
 			cv::waitKey(100);
 			std::cout << "updated position of DM is : " << updatedDM << " in time taken : " << count << std::endl;
+			//std::cout << "updated history of DM is : " << historyDM[count] << " in time taken : " << count << std::endl;
 		}
 
 		count++;
+		historyDM.push_back(updatedDM);
 	}
 
-	
+
+	std::cout << "Delivery man reached destination " << " restaurant "<< " in time : " << count/20 << "minutes"<<std::endl;
+
 	
 	
 
@@ -165,6 +176,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 	int sumProdMat = 0;
 	cv::Point newDM(0,0);
 
+	// Compute the sum of elements in ProdMat
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -179,6 +191,135 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 			//std::cout << "available positions to move at" << i << "," << j << "is" <<ProdMat[i][j] << std::endl;
 		}
 	}
+
+	// Case flag == 0, when only one of available directions are desired direction for DP i.e.only one element of ProdMat is 1
+	if (sumProdMat == 1 && flag == 0)
+	{
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 3; j++)
+			{
+				//ProdMat[i][j] = neighborOfDM[i][j] * availPosOfDM[i][j];
+				//sumProdMat += ProdMat[i][j];
+				if (ProdMat[i][j] == 1)
+				{
+					newDM.x = dm.x + j - 1;
+					newDM.y = dm.y + i - 1;
+				}
+				//std::cout << "available positions to move at" << i << "," << j << "is" <<ProdMat[i][j] << std::endl;
+			}
+		}
+	}
+	// Case flag == 2, when both of available directions can be desired direction for DP i.e.only two elements of ProdMat are 1, typically at turnings
+	else if (sumProdMat == 2 || flag == 2)
+	{
+		// now we brute force to only go in the direction it was not traveling previously, by invoking hisotry
+
+			flag = 0;																						// after taking turn force flag == 0 to go back to previous case
+			if (dm_prev.x == dm.x) 
+			{
+				// if Dp was going along constant X, then it should switch to y direction
+				if (ProdMat[0][1] == 1)
+				{
+					newDM.y = dm.y - 1;
+					newDM.x = dm.x;
+				}
+				else if (ProdMat[2][1] == 1)
+				{
+					newDM.y = dm.y + 1;
+					newDM.x = dm.x;
+				}
+				else
+				{
+					;
+				}
+			}
+				
+			else if (dm_prev.y == dm.y)
+				// if Dp was going along constant Y, then it should switch to x direction
+			{
+				if (ProdMat[1][0] == 1)
+				{
+					newDM.x = dm.x - 1;
+					newDM.y = dm.y;
+				}
+				else if (ProdMat[1][2] == 1)
+				{
+					newDM.x = dm.x + 1;
+					newDM.y = dm.y;
+				}
+				else
+				{
+					;
+				}
+			}
+			
+	
+	}
+	// Case flag == 1, when none of available directions can be desired direction for DP i.e.no elements of ProdMat is 1, typically when DP direction is parallel to destination's lane 
+	else if (sumProdMat == 0 || flag == 1)
+	{
+		if (sumProdMat == 0)																				// force flag == 0 to stay on this condition till a turn occurs
+			flag = 1;
+		
+		// now we explicitly choose direction that is available to move
+		if (dm_prev.x == dm.x) // then it should continue along y
+		{
+			// if the delivery man confronts a turn then turn the flag back to 2
+			if (availPosOfDM[1][0] == 1 || availPosOfDM[1][2] == 1)
+			{
+				flag = 2;
+				newDM.x = dm.x;
+				newDM.y = dm.y;
+			}
+			else
+			{
+				if (dm_prev.y == dm.y - 1)
+				{
+					newDM.y = dm.y + 1;
+					newDM.x = dm.x;
+				}
+				else if (dm_prev.y == dm.y + 1)
+				{
+					newDM.y = dm.y - 1;
+					newDM.x = dm.x;
+				}
+			}
+		}
+		else if (dm_prev.y == dm.y) // then it should continue along x
+		{
+			// if the delivery man confronts a turn then turn the flag back to 2
+			if (availPosOfDM[0][1] == 1 || availPosOfDM[2][1] == 1)
+			{
+				flag = 2;
+				newDM.x = dm.x;
+				newDM.y = dm.y;
+			}
+			else
+			{
+				if (dm_prev.x == dm.x - 1)
+				{
+					newDM.y = dm.y;
+					newDM.x = dm.x + 1;
+				}
+				else if (dm_prev.x == dm.x - 1)
+				{
+					newDM.y = dm.y;
+					newDM.x = dm.x - 1;
+				}
+
+			}				
+		}
+		else
+		{
+			;
+		}
+	}
+	else
+	{
+		;
+	}
+	
 	//std::cout << "updated position of DM is : " <<newDM << std::endl;
 	return newDM;
 }
