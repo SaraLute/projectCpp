@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <vector>
 #include "userData.h"
 
 
@@ -10,7 +11,7 @@ class newOrder {
 private:
     std::string restaurant;
     std::vector<int> items;
-    int tempRes;
+    int tempRes{};
 public:
     newOrder();
     ~newOrder();
@@ -20,6 +21,9 @@ public:
 
     std::string setRestaurant(int tempRes);
 
+    int getTempRes(){
+        return tempRes;
+    }
     std::string getRestaurant(){
         return restaurant;
     }

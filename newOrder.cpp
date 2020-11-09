@@ -3,27 +3,21 @@
 #include <array>
 #include "newOrder.h"
 
-newOrder::newOrder(){
-    restaurantDec();
-    itemDec(tempRes);
-    setRestaurant(tempRes);
-}
+newOrder::newOrder()= default;
 
-newOrder::~newOrder(){
-    //dis stay empty?...
-}
+newOrder::~newOrder()= default;
 
 int newOrder::restaurantDec() {
     std::cout << "Let's order!" << std::endl << "Pick one of the available restaurants: " << std::endl;
     std::cout << "(1)Sushi place, (2)Pizza place, (3)Thai place, (4)Burger place or (5)Expensive place" << std::endl;
     std::array<std::string, 5> decisionRes = {"Sushi place", "Pizza place", "Thai place", "Burger place", "Expensive place"};
     std::cin >> tempRes;
-    restaurant = decisionRes[tempRes];
+    restaurant = decisionRes[tempRes-1];
     std::cout << "You chose : " << restaurant << "! " << std::endl;
     return tempRes;
 }
 
-std::vector<int> newOrder::itemDec(int tempRes) {
+std::vector<int> newOrder::itemDec(int tempRs) {
     if (tempRes==1) {
         int tempItem=1;
         std::cout << "Pick your menu items: " << std::endl;
@@ -45,7 +39,7 @@ std::vector<int> newOrder::itemDec(int tempRes) {
             std::cin >> tempInt;
             items.push_back(tempInt);
         }
-        std::array<std::string,7> pizzaItems = {"margarita", "mozarella", "hawaii"};
+        std::array<std::string,7> pizzaItems = {"Thanks!", "margarita", "mozarella", "hawaii"};
         std::cout << "These are the items you have ordered: " << std::endl;
         for (int i: items)
             std::cout << pizzaItems[i] << "\n";
@@ -58,7 +52,7 @@ std::vector<int> newOrder::itemDec(int tempRes) {
             std::cin >> tempInt;
             items.push_back(tempInt);
         }
-        std::array<std::string,7> thaiItems = {"thai menu 1", "thai menu 2", "thai menu 3"};
+        std::array<std::string,7> thaiItems = {"Thanks!","thai menu 1", "thai menu 2", "thai menu 3"};
         std::cout << "These are the items you have ordered: " << std::endl;
         for (int i: items)
             std::cout << thaiItems[i] << "\n";
@@ -71,7 +65,7 @@ std::vector<int> newOrder::itemDec(int tempRes) {
             std::cin >> tempInt;
             items.push_back(tempInt);
         }
-        std::array<std::string,7> burgerItems = {"hamburger", "cheeseburger", "fries"};
+        std::array<std::string,7> burgerItems = {"Thanks!","hamburger", "cheeseburger", "fries"};
         std::cout << "These are the items you have ordered: " << std::endl;
         for (int i: items)
             std::cout << burgerItems[i] << "\n";
@@ -84,7 +78,7 @@ std::vector<int> newOrder::itemDec(int tempRes) {
             std::cin >> tempInt;
             items.push_back(tempInt);
         }
-        std::array<std::string,7> expensiveItems = {"truffle risotto", "entrecote with aubergine tartar", "vegan option"};
+        std::array<std::string,7> expensiveItems = {"Thanks!","truffle risotto", "entrecote with aubergine tartar", "vegan option"};
         std::cout << "These are the items you have ordered: " << std::endl;
         for (int i: items)
             std::cout << expensiveItems[i] << "\n";
@@ -94,7 +88,7 @@ std::vector<int> newOrder::itemDec(int tempRes) {
 return items;
 }
 
-std::string newOrder::setRestaurant(int tempRes) {
+std::string newOrder::setRestaurant(int tempRst) {
     std::array<std::string, 5> decisionRes = {"Sushi place", "Pizza place", "Thai place", "Burger place", "Expensive place"};
     restaurant = decisionRes[tempRes];
     return restaurant;

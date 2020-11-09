@@ -1,11 +1,11 @@
-#include <iostream>
-#include "newUser.h"
+#include "userData.h"
+#include "newOrder.h"
 
-// This is the main script. When running this, directly or indirectly all functions and other scripts are used.
-// Starting with setupBook to setup the maps and addressBook.
 
 int main() {
-    // setupBook
+    userData one;
+    newOrder two;
+
     std::cout << "Hello, and welcome to this food ordering system." << std::endl;
     std::cout << "Do you have an account? [Y|N] " << std::endl;
     char action;
@@ -17,7 +17,9 @@ int main() {
 
     switch (action) {
         case 'N' :
-            // newUser piet;
+            one.setName();
+            one.setAddress();
+            one.setCoordinates(one.getAddress());
 
             std::cout << "Thanks for signing up!" << std::endl;
             std::cout << "Do you want to order now? [Y|N] " << std::endl;
@@ -26,10 +28,11 @@ int main() {
             switch (action2) {
                 case 'Y' :
                     std::cout << "Then let's go get your order!" << std::endl;
-                    //getOrder
-                    //findAccount
+                    two.restaurantDec();
+                    two.itemDec(two.getTempRes());
+                    two.setRestaurant(two.getTempRes());
                     //deliveryMan
-                    // TrackDelivery
+                    //TrackDelivery
                     break;
                 case 'N' :
                     std::cout << "Thanks for visiting the system, goodbye!" << std::endl;
@@ -40,8 +43,9 @@ int main() {
             break;
         case 'Y' :
             std::cout << "Then let's go get your order!" << std::endl;
-            //getOrder
-            //findAccount
+            two.restaurantDec();
+            two.itemDec(two.getTempRes());
+            two.setRestaurant(two.getTempRes());
             //deliveryMan
             //trackDelivery
             break;
