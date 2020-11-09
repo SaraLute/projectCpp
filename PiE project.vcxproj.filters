@@ -21,9 +21,21 @@
     <ClCompile Include="trackDelivery.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="newOrder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="userData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="trackDelivery.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="newOrder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="userData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

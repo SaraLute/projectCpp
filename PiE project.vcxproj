@@ -145,11 +145,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="newOrder.cpp" />
     <ClCompile Include="PiE project.cpp" />
     <ClCompile Include="trackDelivery.cpp" />
+    <ClCompile Include="userData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="newOrder.h" />
     <ClInclude Include="trackDelivery.h" />
+    <ClInclude Include="userData.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
