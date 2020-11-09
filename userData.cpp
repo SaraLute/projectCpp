@@ -50,4 +50,14 @@ std::string userData::setName() {
     return fullName;
 }
 
+void userData::addressBook() {
+    std::cout << "**********************************************************" << std::endl;
+    std::cout << "         WELCOME to this food ordering system" << std::endl;
+    std::cout << "We hope you will be able to find the food you like!" << std::endl;
+    std::cout << "\nIMPORTANT we only deliver on the following addresses: " << std::endl;
+    std::cout << "      Oldenzaalsestraat 1-4, Molenstraat 5-8, \n       Kuipersdijk 9-12 and Hengelosestraat 13-16" << std::endl;
+    std::cout << "Make sure you live in one of these addresses!" << endl;
+    std::cout << "**********************************************************" << std::endl;
+}
+
 

@@ -93,3 +93,11 @@ std::string newOrder::setRestaurant(int tempRst) {
     restaurant = decisionRes[tempRes];
     return restaurant;
 }
+
+void newOrder::menuCard() {
+    std::cout << "\n**********************************************" << std::endl;
+    std::cout << "  WELCOME to the menu's that are available" << std::endl;
+    std::cout << "You will first be asked to pick a restaurant" << std::endl;
+    std::cout << "and after you can pick the items you'd like!" << std::endl;
+    std::cout << "**********************************************" << std::endl;
+}

@@ -17,6 +17,7 @@ int main() {
 
     switch (action) {
         case 'N' :
+            one.addressBook();
             one.setName();
             one.setAddress();
             one.setCoordinates(one.getAddress());
@@ -28,6 +29,7 @@ int main() {
             switch (action2) {
                 case 'Y' :
                     std::cout << "Then let's go get your order!" << std::endl;
+                    two.menuCard();
                     two.restaurantDec();
                     two.itemDec(two.getTempRes());
                     two.setRestaurant(two.getTempRes());
@@ -43,6 +45,7 @@ int main() {
             break;
         case 'Y' :
             std::cout << "Then let's go get your order!" << std::endl;
+            two.menuCard();
             two.restaurantDec();
             two.itemDec(two.getTempRes());
             two.setRestaurant(two.getTempRes());

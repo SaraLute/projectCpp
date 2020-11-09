@@ -18,8 +18,9 @@ public:
 
     int restaurantDec();
     std::vector<int> itemDec(int tempRes);
-
     std::string setRestaurant(int tempRes);
+
+    static void menuCard();
 
     int getTempRes(){
         return tempRes;

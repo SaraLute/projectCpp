@@ -18,6 +18,7 @@ public:
     std::string setName();
     std::string setAddress();
     std::vector<int> setCoordinates(const std::string& address);
+    void addressBook();
 
     std::string getName(){
         return fullName;
