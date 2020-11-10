@@ -1,13 +1,31 @@
 #include "trackDelivery.h"
 
-trackDelivery::trackDelivery()
+trackDelivery::trackDelivery(int journey, int src, int dst)
 {
 	/// PREPROCESSING DELIVERY PROCESS
+	/// 
 	/// 
 	
 	//Here initialize the vector of delivery person and restaurants- Kaiyu's matlab part
 	initializeDeliveryPerson();
 	initializeRestaurants();
+	initializeCustomer();
+
+	// Choose source and destination for the DeliveryMan
+	if (journey == 0)
+	{
+		//Choose the journey from delivery person (DM) 's location to restaurant
+		source = deliveryPerson.at(src);
+		destination = restaurantLocations.at(dst);
+		journeyFlag = journey;
+	}
+	else
+	{
+		//Choose the journey from delivery person (DM) 's location i.e. restuarant to customer address
+		source = restaurantLocations.at(src);
+		destination = customerLocations.at(dst);
+		journeyFlag = journey;
+	}
 
 	// Upload the city map for display and preprocessing the binary map
 	preprocessingCityMap();
@@ -17,8 +35,8 @@ trackDelivery::trackDelivery()
 	/// 
 	
 
-	/*cv::Point cen(436, 447);
-	int radius = 15;
+	/*cv::Point cen(483, 523);
+	int radius = 20;
 
 	//get the Rect containing the circle:
 	cv::Rect r(cen.x - radius, cen.y - radius, radius * 2, radius * 2);
@@ -41,7 +59,7 @@ void trackDelivery::preprocessingCityMap()
 {
 	
 	mapOfCity = cv::imread("city_map.png");
-	mapToProcess = cv::imread("sample_map.png");
+	mapToProcess = cv::imread("sample_map3.png");
 
 	// Convert binary map aka mapToProcess into grayscale
 	cv::cvtColor(mapToProcess, trajectoryMap, cv::COLOR_BGR2GRAY);
@@ -67,19 +85,27 @@ void trackDelivery::binarizeImage()
 void trackDelivery::deliveryManProgress()
 {
 	// Plotting the coordinates of delivery person, restaurant and customer location
-	//cv::Point DM(42, 53);					//X, Y coordinates of delivery man in terms of cv::Point
-	cv::Point DM = deliveryPerson.at(3);
-	cv::Point res = restaurantLocations.at(4);
-	cv::Scalar colorCircle1(0, 0, 255);		//BGR color
 
-	cv::circle(mapOfCity, DM, 5, cv::Scalar(0, 0, 255), 2);
-	cv::circle(mapOfCity, res, 5, cv::Scalar(255, 0, 0), 2);
+	cv::Scalar colorCircle1(0, 0, 0);
+
+	if (journeyFlag == 0)
+	{
+		colorCircle1 = cv::Scalar(0, 0, 255);	//BGR color for DM when going towards restaurant
+	}
+	else
+	{
+		colorCircle1 = cv::Scalar(255, 0, 0);		//BGR color for DM when going towards restaurant
+	}
+
+	cv::Point DM = source;
+	cv::Point des = destination; 
+
+	cv::circle(mapOfCity, DM, 5, colorCircle1, 2);
+	cv::circle(mapOfCity, des, 5, cv::Scalar(0, 0, 0), 2);
 
 	//Figure 1 - display the city map
 	//cv::imshow("Map of City", mapToProcess);
 	//cv::waitKey(0);
-
-	
 
 	/// TRACKING PROCESS
 	/// 
@@ -87,14 +113,13 @@ void trackDelivery::deliveryManProgress()
 	//Temporary variables
 	int count = 0;
 	cv::Point updatedDM = DM;
-	historyDM.push_back(DM);
+	historyDM.push_back(updatedDM);
 
 	// Inside a while loop
-	while ( ((updatedDM.x!=res.x) || (updatedDM.y!=res.y)) && (count < 1500))
+	while ( ((updatedDM.x!=des.x) || (updatedDM.y!=des.y)) && (count < 1000))
 	{
-		desiredDirection(updatedDM, res);
+		desiredDirection(updatedDM, des);
 		searchNeighbourhood(updatedDM);
-		updatedDM = computeDirection(updatedDM, updatedDM);
 
 		if (count==0)
 			updatedDM = computeDirection(updatedDM, historyDM[0]);
@@ -103,10 +128,11 @@ void trackDelivery::deliveryManProgress()
 
 		if (count % 20 == 0)
 		{
-			cv::circle(mapOfCity, updatedDM, 3, cv::Scalar(0, 0, 255), 1);
+			cv::circle(mapOfCity, updatedDM, 3, colorCircle1, 1);
 			cv::imshow("Map of City", mapOfCity);
 			cv::waitKey(100);
-			//std::cout << "updated position of DM is : " << updatedDM << " in time taken : " << count <<std::endl;
+			//if (flag!=0)
+			std::cout << "updated position of DM is : " << updatedDM << " in time taken : " << count <<" and flag "<<flag<<std::endl;
 			//std::cout << "updated history of DM is : " << historyDM[count] << " in time taken : " << count << std::endl;
 		}
 
@@ -205,7 +231,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 	}
 
 	 //Case flag == 0, when only one of available directions are desired direction for DP i.e.only one element of ProdMat is 1
-	if ((sumProdMat == 1) && (flag == 0))
+	if ((sumProdMat == 1) & (flag == 0))
 	{
 		for (int i = 0; i < 3; i++)
 		{
@@ -223,7 +249,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 		}
 	}
 	// Case flag == 2, when both of available directions can be desired direction for DP i.e.only two elements of ProdMat are 1, typically at turnings
-	else if ((sumProdMat == 2) || (flag == 2))
+	else if ((sumProdMat == 2) | (flag == 2))
 	{
 		// now we brute force to only go in the direction it was not traveling previously, by invoking hisotry
 
@@ -261,7 +287,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 	
 	}
 	// Case flag == 1, when none of available directions can be desired direction for DP i.e.no elements of ProdMat is 1, typically when DP direction is parallel to destination's lane 
-	else if ((sumProdMat == 0) || (flag == 1))
+	else if ((sumProdMat == 0) | (flag == 1))
 	{
 		if (sumProdMat == 0)																				// force flag == 0 to stay on this condition till a turn occurs
 			flag = 1;
@@ -270,7 +296,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 		if (dm_prev.x == dm.x) // then it should continue along y
 		{
 			// if the delivery man confronts a turn then turn the flag back to 2
-			if (neighborOfDM[1][0] == 1 || neighborOfDM[1][2] == 1)
+			if ((neighborOfDM[1][0] == 1) | (neighborOfDM[1][2] == 1))
 			{
 				flag = 2;
 				newDM.x = dm.x;
@@ -293,7 +319,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 		else if (dm_prev.y == dm.y) // then it should continue along x
 		{
 			// if the delivery man confronts a turn then turn the flag back to 2
-			if (neighborOfDM[0][1] == 1 || neighborOfDM[2][1] == 1)
+			if ((neighborOfDM[0][1] == 1) | (neighborOfDM[2][1] == 1))
 			{
 				flag = 2;
 				newDM.x = dm.x;
@@ -347,5 +373,25 @@ void trackDelivery::initializeRestaurants()
 	restaurantLocations.push_back(cv::Point(486, 523));
 	restaurantLocations.push_back(cv::Point(751, 545));
 	restaurantLocations.push_back(cv::Point(678, 523));
+}
 
+void trackDelivery::initializeCustomer()
+{
+	// Using matlab snippet from setupBook
+	customerLocations.push_back(cv::Point(835, 446));
+	customerLocations.push_back(cv::Point(1039, 52));
+	customerLocations.push_back(cv::Point(1185, 382));
+	customerLocations.push_back(cv::Point(1185, 393));
+	customerLocations.push_back(cv::Point(821, 290));
+	customerLocations.push_back(cv::Point(1185, 402));
+	customerLocations.push_back(cv::Point(1185, 382));
+	customerLocations.push_back(cv::Point(992, 52));
+	customerLocations.push_back(cv::Point(1185, 144));
+	customerLocations.push_back(cv::Point(821, 267));
+	customerLocations.push_back(cv::Point(944, 52));
+	customerLocations.push_back(cv::Point(1185, 319));
+	customerLocations.push_back(cv::Point(1185, 131));
+	customerLocations.push_back(cv::Point(1185, 385));
+	customerLocations.push_back(cv::Point(1121, 446));
+	customerLocations.push_back(cv::Point(821, 106));
 }
