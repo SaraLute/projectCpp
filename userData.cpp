@@ -10,8 +10,8 @@ userData::userData() = default;
 userData::~userData() = default;
 
 std::vector<int> userData::setDesCoordinates(const std::string& address) {
-    std::vector<int> x_des = {836, 1040, 1186, 1186, 822, 1186, 1186, 993, 1186, 822, 945, 1186, 1186, 1186, 1122, 822};
-    std::vector<int> y_des = {447, 53, 383, 394, 291, 403, 383, 53, 145, 268, 53, 320, 132, 386, 447, 107};
+    std::vector<int> x_des = {835, 1039, 1185, 1185, 821, 1185, 1185, 992, 1185, 821, 944, 1185, 1185, 1185, 1121, 821};
+    std::vector<int> y_des = {446, 52, 382, 393, 290, 402, 382, 52, 144, 267, 52, 319, 131, 385, 446, 106};
     bool found = false;
     fstream addressbook;
     addressbook.open ("addressbook.txt");

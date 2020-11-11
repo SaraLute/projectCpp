@@ -2,6 +2,7 @@
 #include <cmath>
 #include <numeric>
 
+
 deliveryMen::deliveryMen() = default;
 
 deliveryMen::~deliveryMen() = default;

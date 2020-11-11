@@ -8,7 +8,7 @@
 class userData {
 private:
     std::string fullName;
-    std::string address;
+    std::string address = "Oldenzaalsestraat 1";
     std::vector<int> coordinates;
 
 public:

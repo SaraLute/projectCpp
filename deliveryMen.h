@@ -4,6 +4,8 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <algorithm>
+//#include <cctype>
 #include "userData.h"
 // uses the location of the restaurants, delivery man itself and the destination
 // destination coordinates come from: getDesCoordinates();
@@ -15,8 +17,8 @@ private:
     std::vector<int> delCoordinates;
     std::string closestDelName;
     int delIndex;
-    std::vector<int> x_del = {43, 301, 383, 41, 41, 69, 86};
-    std::vector<int> y_del = {54, 54, 448, 390, 232, 54, 54};
+    std::vector<int> x_del = {42, 300, 382, 40, 40, 68, 85};
+    std::vector<int> y_del = {53, 53, 447, 389, 231, 53, 53};
     std::array<std::string, 7> deliveryJoe = {"Allen", "Bob", "Carol", "Dion", "Edward", "Ferry", "Gosline"};
 public:
     deliveryMen();
