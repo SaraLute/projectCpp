@@ -1,0 +1,22 @@
+README file to the c++ project assignment of Sumit Mohanty and Sara Lute.
+The assignment is a food ordering and delivery calculation system.
+
+--> main.cpp
+    This file uses and combines all created classes into a working assignment. The user is being lead through a
+    series of questions and will this way create an account and place an order.
+
+    --> userData
+        This class contains functions that create a user with name, address and the corresponding coordinates. The class
+        returns the name, address and coordinates of the destination of an order aka the person who ordered.
+
+    --> newOrder
+        This class contains functions that ask for user input on the order. The class returns a restaurant and the
+        items that were picked from the corresponding menu.
+
+    --> deliveryMen
+        This class contains functions that take the location of the restaurant chosen in the newOrder class and
+        calculates the closest delivery person in the system. The class returns the index number of the closest delivery
+        person, the coordinates of the closest person and the name of the closest delivery person.
+
+    --> trackDelivery
+        ....etcceteraaa
