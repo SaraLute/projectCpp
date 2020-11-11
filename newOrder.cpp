@@ -3,10 +3,11 @@
 #include <array>
 #include "newOrder.h"
 
+//"newOrder.cpp" file containing all the setter functions
 newOrder::newOrder()= default;
-
 newOrder::~newOrder()= default;
 
+//restaurantDec requests user input on what restaurant the user wants and returns the index number of this restaurant.
 int newOrder::restaurantDec() {
     std::cout << "Let's order!" << std::endl << "Pick one of the available restaurants: " << std::endl;
     std::cout << "(1)Sushi place, (2)Pizza place, (3)Thai place, (4)Burger place or (5)Expensive place" << std::endl;
@@ -17,11 +18,13 @@ int newOrder::restaurantDec() {
     return tempRes;
 }
 
+//itemDec takes the chosen restaurant index number and shows the corresponding menu, from which the user can pick their preferred items.
 std::vector<int> newOrder::itemDec(int tempRs) {
     if (tempRes==1) {
         int tempItem=1;
         std::cout << "Pick your menu items: " << std::endl;
         std::cout << "(1)salmon roll, (2)ebi roll, (3)tuna sashimi, (4)edame beans, (5)grilled veggies, (6)noodles or (7)tomato soup' (0 to end)" << std::endl;
+        std::cout << "Type the item number and press enter, type 0 and enter to finish." << std::endl;
         while (tempItem) {
             std::cin >> tempItem;
             items.push_back(tempItem);
@@ -35,6 +38,7 @@ std::vector<int> newOrder::itemDec(int tempRs) {
         int tempInt=1;
         std::cout << "Pick your menu items: " << std::endl;
         std::cout << "(1)margarita, (2)mozzarella or (3)hawaii (0 to end)" << std::endl;
+        std::cout << "Type the item number and press enter, type 0 and enter to finish." << std::endl;
         while (tempInt) {
             std::cin >> tempInt;
             items.push_back(tempInt);
@@ -48,6 +52,7 @@ std::vector<int> newOrder::itemDec(int tempRs) {
         int tempInt=1;
         std::cout << "Pick your menu items: " << std::endl;
         std::cout << "(1)thai menu 1, (2)thai menu 2 or (3)thai menu 3 (0 to end)" << std::endl;
+        std::cout << "Type the item number and press enter, type 0 and enter to finish." << std::endl;
         while (tempInt) {
             std::cin >> tempInt;
             items.push_back(tempInt);
@@ -61,6 +66,7 @@ std::vector<int> newOrder::itemDec(int tempRs) {
         int tempInt=1;
         std::cout << "Pick your menu items: " << std::endl;
         std::cout << "(1)hamburger, (2)cheeseburger and/or (3)fries (0 to end)" << std::endl;
+        std::cout << "Type the item number and press enter, type 0 and enter to finish." << std::endl;
         while (tempInt) {
             std::cin >> tempInt;
             items.push_back(tempInt);
@@ -74,6 +80,7 @@ std::vector<int> newOrder::itemDec(int tempRs) {
         int tempInt=1;
         std::cout << "Pick your menu items: " << std::endl;
         std::cout << "(1)truffle risotto, (2)entrecote with aubergine tartar and/or (3)vegan option (0 to end)" << std::endl;
+        std::cout << "Type the item number and press enter, type 0 and enter to finish." << std::endl;
         while (tempInt) {
             std::cin >> tempInt;
             items.push_back(tempInt);
@@ -88,12 +95,14 @@ std::vector<int> newOrder::itemDec(int tempRs) {
 return items;
 }
 
+//setRestaurant takes the chosen restaurant index number and returns the name of the restaurant.
 std::string newOrder::setRestaurant(int tempRst) {
     std::array<std::string, 5> decisionRes = {"Sushi place", "Pizza place", "Thai place", "Burger place", "Expensive place"};
     restaurant = decisionRes[tempRes];
     return restaurant;
 }
 
+//setResCoordinates takes the chosen restaurant index number and returns the corresponding coordinates of the chosen restaurant.
 std::vector<int> newOrder::setResCoordinates(int tempRstr) {
     std::vector<int> x_res = {641, 628, 487, 752, 679};
     std::vector<int> y_res = {524, 744, 524, 546, 524};
@@ -101,6 +110,7 @@ std::vector<int> newOrder::setResCoordinates(int tempRstr) {
     return resCoordinates;
 }
 
+//menuCard is a void that simply outputs and introduction/explanation to the user on the menu.
 void newOrder::menuCard() {
     std::cout << "\n**********************************************" << std::endl;
     std::cout << "  WELCOME to the menu's that are available" << std::endl;
