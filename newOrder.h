@@ -6,6 +6,9 @@
 #include <vector>
 #include "userData.h"
 
+//This is "newOrder.h" file containing the class newOrder. This class contains functions that ask for user input on
+// the order.
+//The class returns a restaurant and the items that were picked from the corresponding menu.
 
 class newOrder {
 private:
@@ -17,14 +20,14 @@ public:
     newOrder();
     ~newOrder();
 
+    //Setters
     int restaurantDec();
     std::vector<int> itemDec(int tempRes);
     std::string setRestaurant(int tempRes);
     std::vector<int> setResCoordinates(int tempRes);
-
-
     static void menuCard();
 
+    //Getters
     std::vector<int> getResCoordinates(){
         return resCoordinates;
     }

@@ -5,67 +5,99 @@
 #include "trackDelivery.h"
 #include "userData.h"
 #include "newOrder.h"
-
-using namespace cv;
-using namespace std;
+#include "deliveryMen.h"
 
 int main()
 {
-	//userData one;
-	//newOrder two;
+	userData one;                                                                                                                               //Object to invoke customer information
+	newOrder two;                                                                                                                               //Object to invoke order infomration
+    deliveryMen three;                                                                                                                          //Object to initialize Deliveryman
 	
+    //Temporary variables declared for exchanging coordinates between User information and Delivery tracking
+    std::vector<int> cust, res, dm;
+    int x0, y0, x1, x2, y1, y2;
+    char action;
+
 	std::cout << "Hello, and welcome to this food ordering system." << std::endl;
+    std::cout << "Do you have an account? [Y|N] " << std::endl;
+    std::cin >> action;
 
-	///// SWITCH FROM SARA'S CODE
- 
- //   std::cout << "Do you have an account? [Y|N] " << std::endl;
- //   char action;
- //   std::cin >> action;
+    // The action stored in 'action' is used in this switch to either make an account first or to go directly
+    // to placing the order. After the account is setup with the order attached, it is send on to pick the nearest
+    // deliveryman and then into the TrackDelivery script.
 
- //   // The action stored in 'action' is used in this switch to either make an account first or to go directly
- //   // to placing the order. After the account is setup with the order attached, it is send on to pick the nearest
- //   // deliveryman and then into the TrackDelivery script.
+    switch (action) {
+    case 'N':
 
- //   switch (action) {
- //   case 'N':
- //       one.addressBook();
- //       one.setName();
- //       one.setAddress();
- //       one.setDesCoordinates(one.getAddress());
+        char action2;
+        one.addressBook();
+        one.setName();
+        one.setAddress();
 
- //       std::cout << "Thanks for signing up!" << std::endl;
- //       std::cout << "Do you want to order now? [Y|N] " << std::endl;
- //       char action2;
- //       std::cin >> action2;
- //       switch (action2) {
- //       case 'Y':
- //           std::cout << "Then let's go get your order!" << std::endl;
- //           two.menuCard();
- //           two.restaurantDec();
- //           two.itemDec(two.getTempRes());
- //           two.setRestaurant(two.getTempRes());
- //           //deliveryMen
- //           //TrackDelivery
- //           break;
- //       case 'N':
- //           std::cout << "Thanks for visiting the system, goodbye!" << std::endl;
- //           break;
- //       default:
- //           std::cout << "This is not an option..." << std::endl;
- //       }
- //       break;
- //   case 'Y':
- //       std::cout << "Then let's go get your order!" << std::endl;
- //       two.menuCard();
- //       two.restaurantDec();
- //       two.itemDec(two.getTempRes());
- //       two.setRestaurant(two.getTempRes());
- //       //deliveryMen
- //       //trackDelivery
- //       break;
- //   default:
- //       std::cout << "This is not an option..." << std::endl;
- //   }
+        // Extract Customer's location
+        cust = one.setDesCoordinates(one.getAddress());
+        x0 = cust.at(0);
+        y0 = cust.at(1);
+
+        std::cout << "Thanks for signing up!" << std::endl;
+        std::cout << "Do you want to order now? [Y|N] " << std::endl;
+        std::cin >> action2;
+        switch (action2) {
+        case 'Y':
+            std::cout << "Then let's go get your order!" << std::endl;
+            two.menuCard();
+            two.restaurantDec();
+            two.itemDec(two.getTempRes());
+            two.setRestaurant(two.getTempRes());
+            two.setResCoordinates(two.getTempRes());
+
+            // Extract Restaurant location
+            res = two.getResCoordinates();
+            x1 = res.at(0);
+            y1 = res.at(1);
+
+            // Extract Delivery location
+            dm = three.setDelCoordinates(three.setDelIndex(res));
+            x2 = dm.at(0);
+            y2 = dm.at(1);
+
+            break;
+        case 'N':
+            std::cout << "Thanks for visiting the system, goodbye!" << std::endl;
+            break;
+        default:
+            std::cout << "This is not an option..." << std::endl;
+        }
+        break;
+    case 'Y':
+
+        // Extract Customer's location - brute force given/constant address
+        cust = one.setDesCoordinates(one.getAddress());
+        x0 = cust.at(0);
+        y0 = cust.at(1);
+
+        std::cout << "Then let's go get your order!" << std::endl;
+        two.menuCard();
+        two.restaurantDec();
+        two.itemDec(two.getTempRes());
+        two.setRestaurant(two.getTempRes());
+        two.setResCoordinates(two.getTempRes());
+
+        // Extract Restaurant location
+
+        res = two.getResCoordinates();
+        x1 = res.at(0);
+        y1 = res.at(1);
+
+        // Extract Delivery location
+        dm = three.setDelCoordinates(three.setDelIndex(res));
+        x2 = dm.at(0);
+        y2 = dm.at(1);
+
+        break;
+    default:
+        std::cout << "This is not an option..." << std::endl;
+    }
 
 
 
@@ -73,12 +105,12 @@ int main()
 	/// 
 	
 	std::cout << "Let us initiate the delivery process : " << std::endl;
-	// Calling trackDelivery object to initialize delivery process to pick up from restuarant
-	trackDelivery DM2Restaurant(0, 1, 1);
+	
+	trackDelivery DM2Restaurant(0, x2, y2, x1, y1);                                                                                                     // Calling trackDelivery object to initialize delivery process to pick up from restuarant
 
-	// Calling trackDelivery object to conclude delivery process to delivery at customer address
-	trackDelivery Restaurant2Customer(1, 2, 4);
+    trackDelivery Restaurant2Customer(1, x1, y1, x0, y0);	                                                                                              // Calling trackDelivery object to conclude delivery process to delivery at customer address
 
+    std::cout << "Eet smaakelijk" << std::endl;
 	return 0;
     
 }

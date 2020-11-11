@@ -1,29 +1,24 @@
 #include "trackDelivery.h"
 
-trackDelivery::trackDelivery(int journey, int src, int dst)
+trackDelivery::trackDelivery(int journey, int src_x, int src_y, int dst_x, int dst_y)
 {
 	/// PREPROCESSING DELIVERY PROCESS
 	/// 
 	/// 
-	
-	//Here initialize the vector of delivery person and restaurants- Kaiyu's matlab part
-	initializeDeliveryPerson();
-	initializeRestaurants();
-	initializeCustomer();
 
-	// Choose source and destination for the DeliveryMan
+	// Choose source and destination for the DeliveryMan based on user input 
 	if (journey == 0)
 	{
 		//Choose the journey from delivery person (DM) 's location to restaurant
-		source = deliveryPerson.at(src);
-		destination = restaurantLocations.at(dst);
+		source = cv::Point(src_x, src_y);//deliveryPerson.at(src);
+		destination = cv::Point(dst_x, dst_y);
 		journeyFlag = journey;
 	}
 	else
 	{
 		//Choose the journey from delivery person (DM) 's location i.e. restuarant to customer address
-		source = restaurantLocations.at(src);
-		destination = customerLocations.at(dst);
+		source = cv::Point(src_x, src_y);
+		destination = cv::Point(dst_x, dst_y);
 		journeyFlag = journey;
 	}
 
@@ -33,19 +28,6 @@ trackDelivery::trackDelivery(int journey, int src, int dst)
 
 	/// Tracking process
 	/// 
-	
-
-	/*cv::Point cen(483, 523);
-	int radius = 20;
-
-	//get the Rect containing the circle:
-	cv::Rect r(cen.x - radius, cen.y - radius, radius * 2, radius * 2);
-
-	// obtain the image ROI:
-	cv::Mat roi(binaryMask, r);
-	cv::imshow("Map of City", roi);
-	cv::waitKey(0);
-	std::cout << roi << std::endl;*/
 	deliveryManProgress();
 
 }
@@ -59,11 +41,11 @@ void trackDelivery::preprocessingCityMap()
 {
 	
 	mapOfCity = cv::imread("city_map.png");
-	mapToProcess = cv::imread("sample_map3.png");
+	mapToProcess = cv::imread("sample_map.png");
 
 	// Convert binary map aka mapToProcess into grayscale
 	cv::cvtColor(mapToProcess, trajectoryMap, cv::COLOR_BGR2GRAY);
-	//std::cout << trajectoryMap.size() << std::endl;
+	
 }
 
 void trackDelivery::binarizeImage()
@@ -74,9 +56,9 @@ void trackDelivery::binarizeImage()
 		for (int j = 0; j < trajectoryMap.cols; j++)
 		{
 			if (trajectoryMap.at<uchar>(i, j) > 100)
-				resultMask.at<uchar>(i, j) = 255;	//Make pixel white
+				resultMask.at<uchar>(i, j) = 255;																							//Make pixel white
 			else
-				resultMask.at<uchar>(i, j) = 0;		//Make pixel black
+				resultMask.at<uchar>(i, j) = 0;																								//Make pixel black
 		}
 	}
 	resultMask.copyTo(binaryMask);
@@ -90,22 +72,19 @@ void trackDelivery::deliveryManProgress()
 
 	if (journeyFlag == 0)
 	{
-		colorCircle1 = cv::Scalar(0, 0, 255);	//BGR color for DM when going towards restaurant
+		colorCircle1 = cv::Scalar(0, 0, 255);																							//BGR color for DM when going towards restaurant
 	}
 	else
 	{
-		colorCircle1 = cv::Scalar(255, 0, 0);		//BGR color for DM when going towards restaurant
+		colorCircle1 = cv::Scalar(255, 0, 0);																							//BGR color for DM when going towards restaurant
 	}
 
 	cv::Point DM = source;
 	cv::Point des = destination; 
 
-	cv::circle(mapOfCity, DM, 5, colorCircle1, 2);
-	cv::circle(mapOfCity, des, 5, cv::Scalar(0, 0, 0), 2);
-
 	//Figure 1 - display the city map
-	//cv::imshow("Map of City", mapToProcess);
-	//cv::waitKey(0);
+	cv::circle(mapOfCity, DM, 5, colorCircle1, 5);
+	cv::circle(mapOfCity, des, 5, cv::Scalar(0, 0, 0), 5);
 
 	/// TRACKING PROCESS
 	/// 
@@ -116,7 +95,7 @@ void trackDelivery::deliveryManProgress()
 	historyDM.push_back(updatedDM);
 
 	// Inside a while loop
-	while ( ((updatedDM.x!=des.x) || (updatedDM.y!=des.y)) && (count < 1000))
+	while ( ((updatedDM.x!=des.x) || (updatedDM.y!=des.y)) && (count < 1500))
 	{
 		desiredDirection(updatedDM, des);
 		searchNeighbourhood(updatedDM);
@@ -128,12 +107,9 @@ void trackDelivery::deliveryManProgress()
 
 		if (count % 20 == 0)
 		{
-			cv::circle(mapOfCity, updatedDM, 3, colorCircle1, 1);
+			cv::circle(mapOfCity, updatedDM, 3, colorCircle1, 3);
 			cv::imshow("Map of City", mapOfCity);
 			cv::waitKey(100);
-			//if (flag!=0)
-			std::cout << "updated position of DM is : " << updatedDM << " in time taken : " << count <<" and flag "<<flag<<std::endl;
-			//std::cout << "updated history of DM is : " << historyDM[count] << " in time taken : " << count << std::endl;
 		}
 
 		count++;
@@ -151,25 +127,11 @@ void trackDelivery::deliveryManProgress()
 // function returns a matrix of 3x3 in neighborhood of given coordinate, it is comprised of logicals 1s and 0s
 void trackDelivery::searchNeighbourhood(cv::Point A)
 {
-	//neighborOfDM = cv::Rect(A.x - 1, A.y - 1, 3, 3);
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++) {
 			//scaling by 255 to make it 1s and 0s
 			neighborOfDM[j][i] = (int)binaryMask.at<uchar>(A.y - 1 + j, A.x - 1 + i)/255;			//here y,x  = col, row format is required to access pixels
-
-			//Some display commands to verify steps
-			//std::cout << "image neighborhood at"<< A.x - 1 + i<<","<< A.y - 1 + j<<" is " << (int) binaryMask.at<uchar>(A.y - 1 + j, A.x - 1 + i) << std::endl;
-			//std::cout << "image neighborhood at" << A.x - 1 + i << "," << A.y - 1 + j << " is " << neighborOfDM[i][j] << std::endl;
 		}
-
-	//Some display commands to verify steps
-	//for (int i = 0; i < 3; i++)
-	//	{
-	//		for (int j = 0; j < 3; j++)
-	//		{
-	//			std::cout << "desired positions to move at" << i << "," << j << "is" << neighborOfDM[i][j] << std::endl;
-	//		}
-	//	}
 }
 
 // function that genreates a 3x3 matric with 1s only in the direction pointing from source towards destination
@@ -187,14 +149,6 @@ void trackDelivery::desiredDirection(cv::Point src, cv::Point des)
 	else if (des.x < src.x)
 		availPosOfDM[1][0] = 1;
 
-	//Some display commands to verify steps
-	//for (int i = 0; i < 3; i++)
-	//{
-	//	for (int j = 0; j < 3; j++)
-	//	{
-	//		std::cout << "available positions to move at" << i << "," << j << "is" << availPosOfDM[i][j] << std::endl;
-	//	}
-	//}
 }
 
 /// Function to compute direction using desired direction matrixand
@@ -221,12 +175,6 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 		{
 			ProdMat[i][j] = neighborOfDM[i][j] * availPosOfDM[i][j];
 			sumProdMat += ProdMat[i][j];
-			/*if (ProdMat[i][j] == 1) 
-			{
-			newDM.x = dm.x + j - 1;
-			newDM.y = dm.y + i - 1;
-			}*/
-			//std::cout << "available positions to move at" << i << "," << j << "is" <<ProdMat[i][j] << std::endl;
 		}
 	}
 
@@ -236,15 +184,12 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 		for (int i = 0; i < 3; i++)
 		{
 			for (int j = 0; j < 3; j++)
-			{
-				//ProdMat[i][j] = neighborOfDM[i][j] * availPosOfDM[i][j];
-				//sumProdMat += ProdMat[i][j];
+			{	
 				if (ProdMat[i][j] == 1)
 				{
 					newDM.x = dm.x + j - 1;
 					newDM.y = dm.y + i - 1;
-				}
-				//std::cout << "available positions to move at" << i << "," << j << "is" <<ProdMat[i][j] << std::endl;
+				}	
 			}
 		}
 	}
@@ -270,8 +215,8 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 			}
 				
 			else if (dm_prev.y == dm.y)
-				// if Dp was going along constant Y, then it should switch to x direction
 			{
+				// if Dp was going along constant Y, then it should switch to x direction
 				if (ProdMat[1][0] == 1)
 				{
 					newDM.x = dm.x - 1;
@@ -293,7 +238,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 			flag = 1;
 		
 		// now we explicitly choose direction that is available to move
-		if (dm_prev.x == dm.x) // then it should continue along y
+		if (dm_prev.x == dm.x)																				// then it should continue along y
 		{
 			// if the delivery man confronts a turn then turn the flag back to 2
 			if ((neighborOfDM[1][0] == 1) | (neighborOfDM[1][2] == 1))
@@ -316,7 +261,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 				}
 			}
 		}
-		else if (dm_prev.y == dm.y) // then it should continue along x
+		else if (dm_prev.y == dm.y)																			// then it should continue along x
 		{
 			// if the delivery man confronts a turn then turn the flag back to 2
 			if ((neighborOfDM[0][1] == 1) | (neighborOfDM[2][1] == 1))
@@ -344,54 +289,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 	}
 
 	
-	//std::cout << "updated position of DM is : " <<newDM << " and flag is : "<<flag<<std::endl;
 	return newDM;
 }
 
 
-/// STATIC DATA<summary>
-/// 
-/// Initialize the vectors of delivery person and restaurant
-void trackDelivery::initializeDeliveryPerson()
-{
-	// Using matlab snippet from setupBook
-	deliveryPerson.push_back(cv::Point(42, 53));
-	deliveryPerson.push_back(cv::Point(300, 53));
-	deliveryPerson.push_back(cv::Point(382, 447));
-	deliveryPerson.push_back(cv::Point(40, 389));
-	deliveryPerson.push_back(cv::Point(40, 231));
-	deliveryPerson.push_back(cv::Point(68, 53));
-	deliveryPerson.push_back(cv::Point(85, 53));
-
-}
-
-void trackDelivery::initializeRestaurants()
-{
-	// Using matlab snippet from setupBook
-	restaurantLocations.push_back(cv::Point(640, 523));
-	restaurantLocations.push_back(cv::Point(627, 743));
-	restaurantLocations.push_back(cv::Point(486, 523));
-	restaurantLocations.push_back(cv::Point(751, 545));
-	restaurantLocations.push_back(cv::Point(678, 523));
-}
-
-void trackDelivery::initializeCustomer()
-{
-	// Using matlab snippet from setupBook
-	customerLocations.push_back(cv::Point(835, 446));
-	customerLocations.push_back(cv::Point(1039, 52));
-	customerLocations.push_back(cv::Point(1185, 382));
-	customerLocations.push_back(cv::Point(1185, 393));
-	customerLocations.push_back(cv::Point(821, 290));
-	customerLocations.push_back(cv::Point(1185, 402));
-	customerLocations.push_back(cv::Point(1185, 382));
-	customerLocations.push_back(cv::Point(992, 52));
-	customerLocations.push_back(cv::Point(1185, 144));
-	customerLocations.push_back(cv::Point(821, 267));
-	customerLocations.push_back(cv::Point(944, 52));
-	customerLocations.push_back(cv::Point(1185, 319));
-	customerLocations.push_back(cv::Point(1185, 131));
-	customerLocations.push_back(cv::Point(1185, 385));
-	customerLocations.push_back(cv::Point(1121, 446));
-	customerLocations.push_back(cv::Point(821, 106));
-}

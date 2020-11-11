@@ -145,13 +145,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="deliveryMen.cpp" />
     <ClCompile Include="newOrder.cpp" />
     <ClCompile Include="PiE project.cpp" />
     <ClCompile Include="trackDelivery.cpp" />
     <ClCompile Include="userData.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="deliveryMen.h" />
     <ClInclude Include="newOrder.h" />
+    <ClInclude Include="newUser.h" />
     <ClInclude Include="trackDelivery.h" />
     <ClInclude Include="userData.h" />
   </ItemGroup>

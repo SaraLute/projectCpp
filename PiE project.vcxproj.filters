@@ -27,6 +27,9 @@
     <ClCompile Include="userData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="deliveryMen.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="trackDelivery.h">
@@ -36,6 +39,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="userData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="deliveryMen.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="newUser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
