@@ -104,8 +104,8 @@ std::string newOrder::setRestaurant(int tempRst) {
 
 //setResCoordinates takes the chosen restaurant index number and returns the corresponding coordinates of the chosen restaurant.
 std::vector<int> newOrder::setResCoordinates(int tempRstr) {
-    std::vector<int> x_res = {641, 628, 487, 752, 679};
-    std::vector<int> y_res = {524, 744, 524, 546, 524};
+    std::vector<int> x_res = {640, 627, 486, 751, 678};
+    std::vector<int> y_res = {523, 743, 523, 545, 523};
     resCoordinates = {x_res[tempRes-1], y_res[tempRes-1]};
     return resCoordinates;
 }
