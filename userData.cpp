@@ -18,10 +18,9 @@ std::vector<int> userData::setDesCoordinates(const std::string& address) {
     unsigned int curLine = 0;
     if (addressbook.is_open()) {
         std::string line;
-        while(getline(addressbook, line)) { // I changed this, see below
+        while(getline(addressbook, line)) {
             curLine++;
             if (line.find(address, 0) != string::npos) {
-                // cout << "found: " << addr << " in line: " << curLine << endl;
                 found = true;
                 coordinates = {x_des[curLine-1], y_des[curLine-1]};
             }
@@ -31,8 +30,6 @@ std::vector<int> userData::setDesCoordinates(const std::string& address) {
         cerr << "Unable to open addressbook.txt" << endl;
         exit(1);    //call system to stop
     }
-//    for (auto& i: coordinates)
-//        std::cout << i << ' ';
     return coordinates;
 }
 
@@ -46,7 +43,6 @@ std::string userData::setAddress() {
 std::string userData::setName() {
     std::cout << "\n Please enter your name: ";
     getline(cin >> ws, fullName);
-    // cout << fullName << endl;
     return fullName;
 }
 
