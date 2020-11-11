@@ -14,9 +14,9 @@ int main()
     deliveryMen three;                                                                                                                          //Object to initialize Deliveryman
 	
     //Temporary variables declared for exchanging coordinates between User information and Delivery tracking
-    std::vector<int> cust, res, dm;
-    int x0, y0, x1, x2, y1, y2;
-    char action;
+    std::vector<int> cust, res, dm;                                                                                                             // temporary variables to store inputs from user
+    int x0, y0, x1, x2, y1, y2;                                                                                                                 // temporary variables to pass input from user as X,Y coordinates to trackDelivery
+    char action;                                                                                                                                // variable to store action for switch case/ response from user
 
 	std::cout << "Hello, and welcome to this food ordering system." << std::endl;
     std::cout << "Do you have an account? [Y|N] " << std::endl;
@@ -29,15 +29,15 @@ int main()
     switch (action) {
     case 'N':
 
-        char action2;
+        char action2;                                                                                                                               // action variable for the nested switch case
         one.addressBook();
         one.setName();
         one.setAddress();
 
-        // Extract Customer's location
+        // Extract Customer's location - use functions from userData
         cust = one.setDesCoordinates(one.getAddress());
-        x0 = cust.at(0);
-        y0 = cust.at(1);
+        x0 = cust.at(0);                                                                                                                            // X coordinate of user's location
+        y0 = cust.at(1);                                                                                                                            // Y coordinate of user's location
 
         std::cout << "Thanks for signing up!" << std::endl;
         std::cout << "Do you want to order now? [Y|N] " << std::endl;
@@ -51,15 +51,15 @@ int main()
             two.setRestaurant(two.getTempRes());
             two.setResCoordinates(two.getTempRes());
 
-            // Extract Restaurant location
+            // Extract Restaurant location use functions from newOrder
             res = two.getResCoordinates();
-            x1 = res.at(0);
-            y1 = res.at(1);
+            x1 = res.at(0);                                                                                                                           // X coordinate of restaurant's location
+            y1 = res.at(1);                                                                                                                           // Y coordinate of restaurant's location
 
-            // Extract Delivery location
+            // Extract Delivery location use functions from deliveryMen
             dm = three.setDelCoordinates(three.setDelIndex(res));
-            x2 = dm.at(0);
-            y2 = dm.at(1);
+            x2 = dm.at(0);                                                                                                                            // X coordinate of delivery person's location
+            y2 = dm.at(1);                                                                                                                            // Y coordinate of delivery person's location
 
             break;
         case 'N':
@@ -71,7 +71,7 @@ int main()
         break;
     case 'Y':
 
-        // Extract Customer's location - brute force given/constant address
+        // Extract Customer's location - brute force given/constant address -use functions from userData
         cust = one.setDesCoordinates(one.getAddress());
         x0 = cust.at(0);
         y0 = cust.at(1);
@@ -83,13 +83,12 @@ int main()
         two.setRestaurant(two.getTempRes());
         two.setResCoordinates(two.getTempRes());
 
-        // Extract Restaurant location
-
+        // Extract Restaurant location - use functions from newOrder
         res = two.getResCoordinates();
         x1 = res.at(0);
         y1 = res.at(1);
 
-        // Extract Delivery location
+        // Extract Delivery location - use functions from deliveryMen
         dm = three.setDelCoordinates(three.setDelIndex(res));
         x2 = dm.at(0);
         y2 = dm.at(1);
@@ -108,7 +107,7 @@ int main()
 	
 	trackDelivery DM2Restaurant(0, x2, y2, x1, y1);                                                                                                     // Calling trackDelivery object to initialize delivery process to pick up from restuarant
 
-    trackDelivery Restaurant2Customer(1, x1, y1, x0, y0);	                                                                                              // Calling trackDelivery object to conclude delivery process to delivery at customer address
+    trackDelivery Restaurant2Customer(1, x1, y1, x0, y0);	                                                                                            // Calling trackDelivery object to conclude delivery process to delivery at customer address
 
     std::cout << "Eet smaakelijk" << std::endl;
 	return 0;

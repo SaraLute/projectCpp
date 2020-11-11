@@ -1,0 +1,60 @@
+########################################## README - FOOD DELIVERY APP: ##############################################
+
+README file to the c++ project assignment of Sumit Mohanty and Sara Lute.
+The assignment is a food ordering and delivery calculation system based on Visual Studio Communiy 2019 (Microsoft)
+
+The following app demonstrates food delivery process that comprises of the following process and the respective parents functions:
+0. PiE project.cpp : This file contains the 'main' function.
+1. User following the system and creating an account  (PiE project.cpp + userData class)
+2. User making an order to a chosen restaurant (newOrder class)
+3. Selection of a delivery person who is closest to the restaurant (deliveryMen class)
+4. Tracking the position of delivery person from origin to designated restaurant (trackDelivery class)
+5. Tracking the position of delivery person from restaurant to final address aka destination (trackDelivery class)
+6. Both the parts (4) and (5) report the time taken by the delivery person.
+
+-->Additional requirement: The program uses opencv library to display images - only functionalities used here are:
+	- imread : to read images of our city map
+	- imshow : display the map
+	- cvtColor :  to create a grayscale verison of map to binarize the pixels
+	- cv::Mat : matrix to store image data
+	- cv::Point : container to store coordinates of delivery person, restaurant and customer's location
+
+--> PiE project.cpp (aka main in Visual Studio)
+    This file uses and combines all created classes into a working assignment. The user is being lead through a
+    series of questions and will this way create an account and place an order.
+
+    --> userData
+        This class contains functions that create a user with name, address and the corresponding coordinates. The class
+        returns the name, address and coordinates of the destination of an order aka the person who ordered.
+
+    --> newOrder
+        This class contains functions that ask for user input on the order. The class returns a restaurant and the
+        items that were picked from the corresponding menu.
+
+    --> deliveryMen
+        This class contains functions that take the location of the restaurant chosen in the newOrder class and
+        calculates the closest delivery person in the system. The class returns the index number of the closest delivery
+        person, the coordinates of the closest person and the name of the closest delivery person.
+
+    --> trackDelivery
+ 	An object is called from the main once the order has been placed and requiste details are taken from the customer
+	   - Additionally, contains two maps of the city - (1) for display purposes, (2) binary segmented simplified version for tracking delivery
+	   --> trackDelivery() : constructor that initiates a sequence of commands to track delivery person (DP) from source to destination and reports time taken while plotting his position in real time
+		- It takes source and destination coordinates fed from the respective functions (userData+newOrder+deliveryMen), both (1) and (2) maps of the city, a marker and a flag of chosen destination (restaurant or customer)
+		- deliveryManProgress() : function to print the source and destination coordinates on the (1) map and enters a while loop to track position of DP and update it once every min of delivery time
+			- For tracking a map (2) is used which contains all the pathways in binary form i.e. 1 (white) for path to take and 0 (black) for empty spaces i.e. line follower concept
+			- For every position of DP invoke the following protocol:
+				--> Function : desiredDirection() : finds a local 3x3 matrix around DP's position and marks desired positions to take in the matrix as 1 and rest 0s.
+				--> Function : searchNeighborhood() : finds neighborhood pixels in map (2) around DP's current position and returns 1s wherever white pixels are present and vice-versa for black pixels.
+				--> Function : computeDirection() :  Based on the previous two matrices computes the next position of DP based on three unique cases denotes by a variable flag
+					- flag == 0 when one of the available positions is the desired position to take
+					- flag == 2 when both the available position are desired positions to take, mostly occurs at corners so here we force a turn
+					- flag == 1 when none of the available positions are desired positions to take, mostly occurs when source and edstination are on paralle lines.
+						    Here, we force the DP to go along the direction its going till it encounters a turn and then turn the flag to 2.
+	- An object of class trackDelivery is invoked twice i.e. for: 
+		- (1) trip from delivery person's origin to restaurant; 
+		- (2) trip after pick from restaurant to customer's address i.e. destination
+	- Finally, calculates the time taken in terms of number steps divided by 20 to give time in minutes.
+
+
+-> THE END : Go ahead and try our app!!

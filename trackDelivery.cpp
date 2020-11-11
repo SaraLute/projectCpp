@@ -1,5 +1,6 @@
 #include "trackDelivery.h"
 
+// constructor that takes coordinates for source and destination on the map, and a flag to set color of DM
 trackDelivery::trackDelivery(int journey, int src_x, int src_y, int dst_x, int dst_y)
 {
 	/// PREPROCESSING DELIVERY PROCESS
@@ -10,7 +11,7 @@ trackDelivery::trackDelivery(int journey, int src_x, int src_y, int dst_x, int d
 	if (journey == 0)
 	{
 		//Choose the journey from delivery person (DM) 's location to restaurant
-		source = cv::Point(src_x, src_y);//deliveryPerson.at(src);
+		source = cv::Point(src_x, src_y);
 		destination = cv::Point(dst_x, dst_y);
 		journeyFlag = journey;
 	}
@@ -22,11 +23,11 @@ trackDelivery::trackDelivery(int journey, int src_x, int src_y, int dst_x, int d
 		journeyFlag = journey;
 	}
 
-	// Upload the city map for display and preprocessing the binary map
+	// Upload the city map for display and preprocessing of the binary map
 	preprocessingCityMap();
 	binarizeImage();
 
-	/// Tracking process
+	/// Tracking process : PRIMARY function to perform tracking of delivery man (DM) coordinates
 	/// 
 	deliveryManProgress();
 
@@ -37,6 +38,7 @@ trackDelivery::~trackDelivery()
 
 }
 
+// Basic processing of the map to read, display and binary threshold the map
 void trackDelivery::preprocessingCityMap()
 {
 	
@@ -48,6 +50,7 @@ void trackDelivery::preprocessingCityMap()
 	
 }
 
+// Create a binary segment image of cit showing path as white (1) and black (0) pixels
 void trackDelivery::binarizeImage()
 {
 	cv::Mat resultMask(trajectoryMap.size(), CV_8UC1);
@@ -64,10 +67,10 @@ void trackDelivery::binarizeImage()
 	resultMask.copyTo(binaryMask);
 }
 
+// PRIMARY function to perform tracking of delivery man (DM) coordinates
 void trackDelivery::deliveryManProgress()
 {
 	// Plotting the coordinates of delivery person, restaurant and customer location
-
 	cv::Scalar colorCircle1(0, 0, 0);
 
 	if (journeyFlag == 0)
@@ -79,6 +82,7 @@ void trackDelivery::deliveryManProgress()
 		colorCircle1 = cv::Scalar(255, 0, 0);																							//BGR color for DM when going towards restaurant
 	}
 
+	// Pass the user fed coordinates to source and destination containers 
 	cv::Point DM = source;
 	cv::Point des = destination; 
 
@@ -89,12 +93,12 @@ void trackDelivery::deliveryManProgress()
 	/// TRACKING PROCESS
 	/// 
 	
-	//Temporary variables
-	int count = 0;
-	cv::Point updatedDM = DM;
+	//Temporary variables used for calculation
+	int count = 0;																														// Counting number of steps i.e. time taken by DM to pick up/complete delivery
+	cv::Point updatedDM = DM;																											// Storing history of DM positions
 	historyDM.push_back(updatedDM);
 
-	// Inside a while loop
+	// Inside a while loop compute the next positions of DM till it reaches from a source coordinate to a destination
 	while ( ((updatedDM.x!=des.x) || (updatedDM.y!=des.y)) && (count < 1500))
 	{
 		desiredDirection(updatedDM, des);
@@ -107,6 +111,7 @@ void trackDelivery::deliveryManProgress()
 
 		if (count % 20 == 0)
 		{
+			// Display DM position of map every 20 steps/counts taken i.e. 1 minute in our time scale 
 			cv::circle(mapOfCity, updatedDM, 3, colorCircle1, 3);
 			cv::imshow("Map of City", mapOfCity);
 			cv::waitKey(100);
@@ -134,7 +139,7 @@ void trackDelivery::searchNeighbourhood(cv::Point A)
 		}
 }
 
-// function that genreates a 3x3 matric with 1s only in the direction pointing from source towards destination
+// function that genreates a 3x3 matrix with 1s only in the direction pointing from source towards destination
 void trackDelivery::desiredDirection(cv::Point src, cv::Point des)
 {
 	// Checking available Y spots
@@ -168,7 +173,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 	int sumProdMat = 0;
 	cv::Point newDM = dm;
 
-	// Compute the sum of elements in ProdMat
+	/// Compute the sum of elements in ProdMat which is sum of output of searchNeighborhood X desiredDirection
 	for (int i = 0; i < 3; i++)
 	{
 		for (int j = 0; j < 3; j++)
@@ -178,7 +183,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 		}
 	}
 
-	 //Case flag == 0, when only one of available directions are desired direction for DP i.e.only one element of ProdMat is 1
+	 ///Case flag == 0, when only one of available directions are desired direction for DM i.e.only one element of ProdMat is 1
 	if ((sumProdMat == 1) & (flag == 0))
 	{
 		for (int i = 0; i < 3; i++)
@@ -193,7 +198,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 			}
 		}
 	}
-	// Case flag == 2, when both of available directions can be desired direction for DP i.e.only two elements of ProdMat are 1, typically at turnings
+	/// Case flag == 2, when both of available directions can be desired direction for DM i.e.only two elements of ProdMat are 1, typically at turnings
 	else if ((sumProdMat == 2) | (flag == 2))
 	{
 		// now we brute force to only go in the direction it was not traveling previously, by invoking hisotry
@@ -201,7 +206,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 			flag = 0;																						// after taking turn force flag == 0 to go back to previous case
 			if (dm_prev.x == dm.x) 
 			{
-				// if Dp was going along constant X, then it should switch to y direction
+				// if DM was going along constant X, then it should switch to y direction
 				if (ProdMat[0][1] == 1)
 				{
 					newDM.y = dm.y - 1;
@@ -216,7 +221,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 				
 			else if (dm_prev.y == dm.y)
 			{
-				// if Dp was going along constant Y, then it should switch to x direction
+				// if DM was going along constant Y, then it should switch to x direction
 				if (ProdMat[1][0] == 1)
 				{
 					newDM.x = dm.x - 1;
@@ -231,7 +236,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 			
 	
 	}
-	// Case flag == 1, when none of available directions can be desired direction for DP i.e.no elements of ProdMat is 1, typically when DP direction is parallel to destination's lane 
+	/// Case flag == 1, when none of available directions can be desired direction for DP i.e.no elements of ProdMat is 1, typically when DM direction is parallel to destination's lane 
 	else if ((sumProdMat == 0) | (flag == 1))
 	{
 		if (sumProdMat == 0)																				// force flag == 0 to stay on this condition till a turn occurs
@@ -288,7 +293,7 @@ cv::Point trackDelivery::computeDirection(cv::Point dm, cv::Point dm_prev)
 
 	}
 
-	
+	// return the new position of DM
 	return newDM;
 }
 
